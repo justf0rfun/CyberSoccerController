@@ -11,13 +11,13 @@
 			<name>Scala-tools Maven2 Repository</name>
 			<url>http://scala-tools.org/repo-releases</url>
 		</repository>
-        <repository>
-            <id>typesafe</id>
-            <name>Typesafe Repository</name>
-            <url>http://repo.typesafe.com/typesafe/releases/</url>
-        </repository>
-    </repositories>
-	
+		<repository>
+			<id>typesafe</id>
+			<name>Typesafe Repository</name>
+			<url>http://repo.typesafe.com/typesafe/releases/</url>
+		</repository>
+	</repositories>
+
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -40,19 +40,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>justf0rfun</groupId>
-			<artifactId>CyberSoccerModel</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-actor_2.10</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>justf0rfun</groupId>
 			<artifactId>CyberSoccerPlayer</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor</artifactId>
-			<version>2.0.4</version>
 		</dependency>
 	</dependencies>
 </project>
