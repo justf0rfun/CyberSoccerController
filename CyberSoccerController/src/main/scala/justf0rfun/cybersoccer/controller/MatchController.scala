@@ -114,7 +114,6 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 					case _ => kicks(Random.nextInt(kicks.size))
 				}
 			}
-			//			newBall = kickBall(matchState.ball, kickingBodyAndKick._1, kickingBodyAndKick._2, timeIntervalSinceLastMatchState)
 			newBall = matchState.ball.kick(kickingBodyAndKick._2, timeIntervalSinceLastMatchState)
 			kickingBody = Some(kickingBodyAndKick._1)
 		}
