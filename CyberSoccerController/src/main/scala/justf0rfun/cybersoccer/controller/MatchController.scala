@@ -101,7 +101,7 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 				if (kick.vector.distance <= matchConfiguration.kickForceMaximum) {
 					(playerBodies(peripheralNervousSystem), kick)
 				} else {
-					(playerBodies(peripheralNervousSystem), new Kick(new Vector(kick.vector.angle, matchConfiguration.kickForceMaximum)))
+					(playerBodies(peripheralNervousSystem), new Kick(Vector.createPolarVector(kick.vector.angle, matchConfiguration.kickForceMaximum)))
 				}
 			}
 			//			case _ =>
