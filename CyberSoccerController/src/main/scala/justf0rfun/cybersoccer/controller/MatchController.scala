@@ -23,6 +23,7 @@ import justf0rfun.mathematics.geometry.linear.LineSegment
 import justf0rfun.mathematics.geometry.linear.Vector
 import justf0rfun.mathematics.geometry.Angle
 import justf0rfun.mathematics.geometry.Point
+import java.util.logging.Logger
 
 private object NextStep
 
@@ -45,8 +46,6 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 				matchState = nextState(matchState, playerActions)
 				updateBodies
 				publishMatchState(matchState)
-//				Thread.sleep(TimeMeasurement.nanoSecondsToMilliSeconds(cycleTimeInterval))
-//				self ! NextStep
 			}
 		}
 		case move: Move => {
@@ -57,7 +56,9 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 		}
 		case PublishAndSubscribeProtocol.Subscribe(subscriber: ActorRef) => {
 			subscribers += subscriber
-			subscriber ! matchState
+			if (matchState != null) {
+				subscriber ! matchState
+			}
 		}
 		case PublishAndSubscribeProtocol.Unsubscribe(subscriber) => subscribers -= subscriber
 		case PublishAndSubscribeProtocol.RequestLatestPublication => sender ! PublishAndSubscribeProtocol.Publication(matchState)
@@ -73,7 +74,6 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 		matchState = initializeMatch
 		updateBodies
 		publishMatchState(matchState)
-		self ! NextStep
 	}
 
 	private def initializeMatch = {
@@ -104,7 +104,7 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 					(playerBodies(peripheralNervousSystem), new Kick(new Vector(kick.vector.angle, matchConfiguration.kickForceMaximum)))
 				}
 			}
-//			case _ =>
+			//			case _ =>
 		})
 		var kickingBody: Option[Body] = None
 		if (!kicks.isEmpty) {
@@ -123,6 +123,10 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 			case (peripheralNervousSystem: ActorRef, move: Move) => playerBodies += (peripheralNervousSystem -> playerBodies(peripheralNervousSystem).move(move, timeIntervalSinceLastMatchState))
 			case _ =>
 		})
+		if (playerActions.size != matchConfiguration.numberOfPlayers * 2) {
+			//TODO make a warning loging out of this
+			println(f"Number of player actions: ${playerActions.size}%d, number of team members: ${matchConfiguration.numberOfPlayers}%d")
+		}
 		playerActions.clear()
 		latestRefereeDecision match {
 			case Some(RefereeDecision.Goal(team)) => newBall = createKickOffBall
@@ -130,8 +134,10 @@ class MatchController(hostCentralNervousSystemFactory: CentralNervousSystemFacto
 			case Some(RefereeDecision.CornerKick(team, point)) => newBall = createSetPieceBall(point)
 			case Some(RefereeDecision.ThrowIn(team, point)) => newBall = createSetPieceBall(point)
 			case Some(RefereeDecision.Finish(winner)) => {
+				scheduler.isRunning = false
 				playerBodies.keys.foreach(context.stop)
 				context.stop(referee)
+				context.stop(self)
 			}
 			case _ => newBall = newBall.move(timeIntervalSinceLastMatchState)
 		}
